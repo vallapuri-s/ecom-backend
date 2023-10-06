@@ -28,26 +28,26 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public ProductDto get(final String id) {
+    public ProductDto get(final Long id) {
         return productRepository.findById(id)
                 .map(product -> mapToDTO(product, new ProductDto()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    public String create(final ProductDto productDTO) {
+    public Long create(final ProductDto productDTO) {
         final Product product = new Product();
         mapToEntity(productDTO, product);
         return productRepository.save(product).getId();
     }
 
-    public void update(final String id, final ProductDto productDTO) {
+    public void update(final Long id, final ProductDto productDTO) {
         final Product product = productRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
         mapToEntity(productDTO, product);
         productRepository.save(product);
     }
 
-    public void delete(final String id) {
+    public void delete(final Long id) {
         productRepository.deleteById(id);
     }
 
@@ -59,7 +59,6 @@ public class ProductService {
         productDTO.setDescription(product.getDescription());
         productDTO.setManufacturer(product.getManufacturer());
         productDTO.setAvailableItems(product.getAvailableItems());
-        productDTO.setImageUrl(product.getImageUrl());
         return productDTO;
     }
 
@@ -70,7 +69,6 @@ public class ProductService {
         product.setDescription(productDTO.getDescription());
         product.setManufacturer(productDTO.getManufacturer());
         product.setAvailableItems(productDTO.getAvailableItems());
-        product.setImageUrl(productDTO.getImageUrl());
         return product;
     }
 

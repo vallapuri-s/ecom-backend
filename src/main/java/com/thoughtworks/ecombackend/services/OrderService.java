@@ -1,8 +1,9 @@
 package com.thoughtworks.ecombackend.services;
 
+import com.thoughtworks.ecombackend.dto.LineItemDto;
 import com.thoughtworks.ecombackend.dto.OrderDto;
+import com.thoughtworks.ecombackend.models.LineItem;
 import com.thoughtworks.ecombackend.models.Order;
-import com.thoughtworks.ecombackend.models.Product;
 import com.thoughtworks.ecombackend.models.User;
 import com.thoughtworks.ecombackend.repositories.OrderRepository;
 import com.thoughtworks.ecombackend.repositories.ProductRepository;
@@ -36,46 +37,58 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public OrderDto get(final String id) {
+    public OrderDto get(final Long id) {
         return orderRepository.findById(id)
                 .map(order -> mapToDTO(order, new OrderDto()))
-                .orElseThrow(() -> new NotFoundException());
+                .orElseThrow(NotFoundException::new);
     }
 
-    public String create(final OrderDto orderDTO) {
+    public Long create(final OrderDto orderDTO) {
         final Order order = new Order();
         mapToEntity(orderDTO, order);
         return orderRepository.save(order).getId();
     }
 
-    public void update(final String id, final OrderDto orderDTO) {
+    public void update(final Long id, final OrderDto orderDTO) {
         final Order order = orderRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException());
+                .orElseThrow(NotFoundException::new);
         mapToEntity(orderDTO, order);
         orderRepository.save(order);
     }
 
-    public void delete(final String id) {
+    public void delete(final Long id) {
         orderRepository.deleteById(id);
     }
 
     private OrderDto mapToDTO(final Order order, final OrderDto orderDTO) {
         orderDTO.setId(order.getId());
-        orderDTO.setQuantity(order.getQuantity());
-        orderDTO.setUser(order.getUser() == null ? null : order.getUser().getId());
-      //  orderDTO.setProduct(order.getProduct() == null ? null : order.getProduct().getId());
+        orderDTO.setUserId(order.getUser().getId());
+        orderDTO.setLineItems(mapLineItemsToDTO(order));
         return orderDTO;
     }
 
-    private Order mapToEntity(final OrderDto orderDTO, final Order order) {
-        order.setQuantity(orderDTO.getQuantity());
-        final User user = orderDTO.getUser() == null ? null : userRepository.findById(orderDTO.getUser())
+    private void mapToEntity(final OrderDto orderDTO, final Order order) {
+        final User user = orderDTO.getUserId() == null ? null : userRepository.findById(orderDTO.getUserId())
                 .orElseThrow(() -> new NotFoundException("user not found"));
         order.setUser(user);
-        final Product product = orderDTO.getProduct() == null ? null : productRepository.findById(orderDTO.getProduct())
-                .orElseThrow(() -> new NotFoundException("product not found"));
-      //  order.setProduct(product);
-        return order;
+        order.setLineItems(mapLineItemsToEntity(orderDTO, order));
     }
 
+    // write method to map line items from Order to OrderDto object and return it
+    private List<LineItemDto> mapLineItemsToDTO(Order order) {
+        return order.getLineItems().stream().map(lineItem -> new LineItemDto(
+                lineItem.getId(),
+                lineItem.getProduct().getId(),
+                lineItem.getQuantity())).collect(Collectors.toList());
+    }
+
+    private List<LineItem> mapLineItemsToEntity(OrderDto orderDto, Order order) {
+        return orderDto.getLineItems().stream().map(lineItem -> new LineItem(
+                        lineItem.getId(),
+                        lineItem.getQuantity(),
+                        lineItem.getProductId() == null ? null : productRepository.findById(lineItem.getProductId())
+                                .orElseThrow(() -> new NotFoundException("product not found")),
+                        order))
+                .collect(Collectors.toList());
+    }
 }
