@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class UserDto {
 
-    private String id;
+    private Long id;
 
     @NotNull
     @Size(max = 255)

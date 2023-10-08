@@ -1,0 +1,10 @@
+build/
+.gradle/
+.idea/
+.tmp
+
+caches/
+daemon/
+native/
+wrapper/
+jdks
