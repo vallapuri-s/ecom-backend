@@ -25,12 +25,12 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OrderDto> getOrder(@PathVariable final Long id) {
+    public ResponseEntity<OrderDto> getOrder(@PathVariable final String id) {
         return ResponseEntity.ok(orderService.get(id));
     }
 
     @PostMapping
-    public ResponseEntity<Long> createOrder(@RequestBody @Valid final OrderDto orderDTO) {
+    public ResponseEntity<String> createOrder(@RequestBody @Valid final OrderDto orderDTO) {
         return new ResponseEntity<>(orderService.create(orderDTO), HttpStatus.CREATED);
     }
 

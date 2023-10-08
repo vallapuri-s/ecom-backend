@@ -26,26 +26,26 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserDto get(final Long id) {
+    public UserDto get(final String id) {
         return userRepository.findById(id)
                 .map(user -> mapToDTO(user, new UserDto()))
                 .orElseThrow(() -> new NotFoundException());
     }
 
-    public Long create(final UserDto userDTO) {
+    public String create(final UserDto userDTO) {
         final User user = new User();
         mapToEntity(userDTO, user);
         return userRepository.save(user).getId();
     }
 
-    public void update(final Long id, final UserDto userDTO) {
+    public void update(final String id, final UserDto userDTO) {
         final User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException());
         mapToEntity(userDTO, user);
         userRepository.save(user);
     }
 
-    public void delete(final Long id) {
+    public void delete(final String id) {
         userRepository.deleteById(id);
     }
 
@@ -59,12 +59,13 @@ public class UserService {
         return userDTO;
     }
 
-    private void mapToEntity(final UserDto userDTO, final User user) {
+    private User mapToEntity(final UserDto userDTO, final User user) {
         user.setFirstName(userDTO.getFirstName());
         user.setLastName(userDTO.getLastName());
         user.setEmail(userDTO.getEmail());
         user.setPassword(userDTO.getPassword());
         user.setContactNumber(userDTO.getContactNumber());
+        return user;
     }
 
 }

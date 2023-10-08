@@ -2,30 +2,27 @@ package com.thoughtworks.ecombackend.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 
 @Data
 @Entity
-@Table(name = "line_items")
-@AllArgsConstructor
-@NoArgsConstructor
+@Table(name = "line_item")
 public class LineItem {
 
-    @jakarta.persistence.Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String id;
 
     @NotNull
     private Integer quantity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="product_id", referencedColumnName ="id", nullable=false)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "lineItems")
     @NotNull
     private Product product;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="order_id",referencedColumnName = "id", nullable=false)
+    @OneToOne(fetch = FetchType.EAGER, mappedBy = "lineItems")
+    @NotNull
     private Order order;
+
 }

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.OffsetDateTime;
@@ -12,12 +13,12 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "users")
+@Table(name = "user")
 public class User {
 
-    @jakarta.persistence.Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String id;
 
     @NotNull
     @Size(max = 255)
@@ -39,7 +40,9 @@ public class User {
     @Size(max = 255)
     private String contactNumber;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "orders_id", referencedColumnName = "id")
+    @NotNull
     private List<Order> orders;
 
     @CreatedDate

@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 @Data
 public class ProductDto {
 
-    private Long id;
+    private String id;
 
     @NotNull
     @Size(max = 255)
@@ -29,5 +29,8 @@ public class ProductDto {
 
     @NotNull
     private Integer availableItems;
+
+    @Size(max = 255)
+    private String imageUrl;
 
 }

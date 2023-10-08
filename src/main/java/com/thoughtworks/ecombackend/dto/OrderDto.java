@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 public class OrderDto {
 
-    private Long id;
+    private String id;
 
     @NotNull
-    private Long userId;
+    private String userId;
 
     @NotNull
     private List<LineItemDto> lineItems;

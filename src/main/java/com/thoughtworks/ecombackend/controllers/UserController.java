@@ -1,6 +1,7 @@
 package com.thoughtworks.ecombackend.controllers;
 
 
+import com.thoughtworks.ecombackend.dto.OrderDto;
 import com.thoughtworks.ecombackend.dto.UserDto;
 import com.thoughtworks.ecombackend.services.UserService;
 import jakarta.validation.Valid;
@@ -27,25 +28,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable final Long id) {
+    public ResponseEntity<UserDto> getUser(@PathVariable final String id) {
         return ResponseEntity.ok(userService.get(id));
     }
 
     @PostMapping
-    public ResponseEntity<Long> createUser(@RequestBody @Valid final UserDto userDto) {
+    public ResponseEntity<String> createUser(@RequestBody @Valid final UserDto userDto) {
         return new ResponseEntity<>(userService.create(userDto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable final Long id,
-                                             @RequestBody @Valid final UserDto userDto) {
-        userService.update(id, userDto);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping
-    public ResponseEntity<Void> DeleteUser(@PathVariable final Long id) {
-        userService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
 }
