@@ -1,3 +1,5 @@
 fileignoreconfig:
 - filename: src/main/resources/application.properties
   checksum: 2bbff689998af11a6cd5c1b5f952a35f10638044a91daf5952ef555b02e31261
+- filename: src/main/resources/collections/ecom.postman_collection.json
+  checksum: f271903cf1bdd37452d4988ce2a2630e7dd16ebbebfd13bedd54741fb8e5e671
