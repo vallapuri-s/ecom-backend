@@ -3,7 +3,7 @@ build/
 .idea/
 .tmp
 data/
-out/
+out
 caches/
 daemon/
 native/
