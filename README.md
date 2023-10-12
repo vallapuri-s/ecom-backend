@@ -40,7 +40,8 @@ echo $JAVA_HOME
 ### Viewing the H2 database from the console
 #### Note: H2 database is an in memory database that will be reset every time the application is restarted
 * After starting the application, we can navigate to `http://localhost:8080/h2-console`, which will present us with a login page.
-* Console will look like this
+* Console login screen will look like this
+
 ![img.png](src/main/resources/static/h2_connection.png)
 * Type in the password as `password` and click on connect
 * We can now view the tables and run queries on the database
