@@ -3,9 +3,10 @@ build/
 .idea/
 .tmp
 data/
-
+out/
 caches/
 daemon/
 native/
 wrapper/
 jdks
+

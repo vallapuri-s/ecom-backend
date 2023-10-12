@@ -13,6 +13,8 @@ source "$HOME/.sdkman/bin/sdkman-init.sh"
 sdk list java
 sdk install java 17.0.7-amzn
 sdk use java 17.0.7-amzn
+java -version
+echo $JAVA_HOME
 ```
 
 ### Setting up java runtime on intellij
@@ -20,6 +22,8 @@ sdk use java 17.0.7-amzn
 * Go to File -> Project Structure -> Project Settings -> Project -> Project SDK -> Select the java 17 sdk
 * Set up the module sdk in project settings to 17 as well
 * Set up the gradle jvm version to 17 in Settings -> Build, Execution, Deployment -> Build Tools -> Gradle -> Gradle JVM to 17
+* Additionally, you might have to set up classpath using Run -> Edit Configurations -> Add new configuration -> Application -> Main class -> EcomBackendApplication -> Use classpath of module -> ecom-backend_main
+* Restart IntelliJ
 
 ### Running the application
 * Run the main method in EcomBackendApplication.java or using the command
