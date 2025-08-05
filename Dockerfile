@@ -1,5 +1,5 @@
 # Multi-stage build for Spring Boot application
-FROM openjdk:17-jdk-slim AS build
+FROM eclipse-temurin:17-jdk AS build
 
 # Set working directory
 WORKDIR /app
@@ -23,7 +23,7 @@ COPY src src
 RUN ./gradlew build -x test --no-daemon
 
 # Runtime stage
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre
 
 # Create app user for security
 RUN addgroup --system app && adduser --system --ingroup app app
