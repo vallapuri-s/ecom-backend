@@ -49,3 +49,107 @@ echo $JAVA_HOME
 ### Using the Collection to test the APIs
 * If you are familiar with Insomnia, collection can be found as [ecom-Insomnia_collection.json](src/main/resources/collections/ecom-Insomnia_collection.json)
 * If you are comfortable with postman, collection can be found as [ecom-Postman_collection.json](src/main/resources/collections/ecom.postman_collection.json)
+
+## Docker and CI/CD
+
+### Running with Docker
+
+#### Build the Docker image locally:
+```bash
+docker build -t ecom-backend .
+```
+
+#### Run the container:
+```bash
+docker run -p 8080:8080 ecom-backend
+```
+
+#### Access the application:
+- Main application: http://localhost:8080
+- H2 Console: http://localhost:8080/h2-console
+
+### GitHub Actions CI/CD Pipeline
+
+The repository includes GitHub Actions workflows for automated testing and Docker image building with AWS ECR integration:
+
+#### Workflows:
+1. **Test Application** (`test` job):
+   - Runs on every push and pull request
+   - Sets up Java 17 environment
+   - Caches Gradle dependencies for faster builds
+   - Runs all tests with `./gradlew test`
+   - Uploads test results as artifacts
+
+2. **Build Docker Image** (`build-docker` job):
+   - Runs only on pushes to `main` or `develop` branches
+   - Builds and pushes Docker image to AWS ECR
+   - Uses Docker layer caching for faster builds
+   - Tags images with commit SHA and `latest` tag
+
+3. **Security Scan** (`security-scan` job):
+   - Runs vulnerability scanning on the built image
+   - Uses Trivy for container security analysis
+   - Uploads results to GitHub Security tab
+
+#### How it works:
+1. When you push code to `main` or `develop` branches, the workflow automatically:
+   - Runs all tests to ensure code quality
+   - Authenticates with AWS using OIDC
+   - Builds a Docker image if tests pass
+   - Pushes the image to AWS ECR
+   - Performs security scanning
+
+#### Accessing the built image:
+```bash
+# Configure AWS CLI
+aws configure
+
+# Pull the latest image
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin {AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com
+docker pull {AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/ecom-backend:latest
+
+# Run the container
+docker run -p 8080:8080 {AWS_ACCOUNT_ID}.dkr.ecr.us-east-1.amazonaws.com/ecom-backend:latest
+```
+
+#### Prerequisites:
+- AWS ECR repository named `ecom-backend` in `us-east-1` region
+- AWS IAM role with ECR permissions configured for GitHub Actions OIDC
+- GitHub secret `AWS_ROLE_ARN` containing the IAM role ARN
+- ECR repository policy allowing push/pull access
+
+#### AWS Setup Required:
+1. **Create ECR Repository**:
+   ```bash
+   aws ecr create-repository --repository-name ecom-backend --region us-east-1
+   ```
+
+2. **Configure IAM Role for GitHub Actions**:
+   - Create IAM role with ECR permissions
+   - Configure OIDC provider for GitHub Actions
+   - Add the role ARN to GitHub repository secrets as `AWS_ROLE_ARN`
+
+3. **ECR Repository Policy** (optional):
+   ```json
+   {
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Sid": "AllowGitHubActions",
+         "Effect": "Allow",
+         "Principal": {
+           "AWS": "arn:aws:iam::YOUR_ACCOUNT_ID:role/YOUR_GITHUB_ACTIONS_ROLE"
+         },
+         "Action": [
+           "ecr:GetDownloadUrlForLayer",
+           "ecr:BatchGetImage",
+           "ecr:BatchCheckLayerAvailability",
+           "ecr:PutImage",
+           "ecr:InitiateLayerUpload",
+           "ecr:UploadLayerPart",
+           "ecr:CompleteLayerUpload"
+         ]
+       }
+     ]
+   }
+   ```
